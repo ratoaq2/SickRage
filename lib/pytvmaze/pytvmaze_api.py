@@ -472,7 +472,6 @@ class TVmaze(object):
             'name': 'seriesname',
             'summary': 'overview',
             'premiered': 'firstaired',
-            'genres': 'genre',
             'image': 'fanart',
             'url': 'show_url',
         }
@@ -489,6 +488,8 @@ class TVmaze(object):
                         new_dict['airs_dayofweek'] = u', '.join(value.value('days')) if value.get('days') else None
                     if key == 'network':
                         new_dict['network'] = value.get('name')
+                    if key == 'webChannel':
+                        new_dict['webchannel'] = value.get('name')
                     if key == 'image':
                         if value.get('medium'):
                             new_dict['image_medium'] = value.get('medium')
@@ -498,8 +499,14 @@ class TVmaze(object):
                         new_dict['tvrage_id'] = value.get('tvrage')
                         new_dict['tvdb_id'] = value.get('thetvdb')
                         new_dict['imdb_id'] = value.get('imdb')
+                    if key == 'genres' and isinstance(value, list):
+                        new_dict['genre'] = '|' + '|'.join(value) + '|'
             except Exception:
                 continue
+
+        # Fix network for webChannel shows.
+        new_dict['network'] = new_dict.get('network') or new_dict.get('webchannel')
+
         return OrderedDict({parsing_into_key: new_dict})
 
     def _getTempDir(self):

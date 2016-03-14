@@ -175,7 +175,7 @@ class TMDB:
             response = TMDB._request('GET', path, params)
             TMDB._set_attrs_to_values(self, response)
             return response
-            
+
         # optional parameters: page, start_date, end_date
         def person(self, params={}):
             path = 'person/changes'
@@ -297,7 +297,7 @@ class TMDB:
             response = TMDB._request('GET', path, params)
             TMDB._set_attrs_to_values(self, response)
             return response
-            
+
         # optional parameters: page, language, include_all_movies, include_adult
         def movies(self, params={}):
             path = 'genre' + '/' + str(self.id) + '/movies'
