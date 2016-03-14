@@ -328,7 +328,7 @@ class QueueItemAdd(ShowQueueItem):
             t = sickbeard.indexerApi(self.indexer).indexer(**lINDEXER_API_PARMS)
             s = t[self.indexer_id]
 
-            # Let's try to create the show Dir if it's not provided. This way we force the show dir to build build using the
+            # Let's try to create the show Dir if it's not provided. This way we force the show dir to build using the
             # Indexers provided series name
             if not self.showDir and self.root_dir:
                 show_name = get_showname_from_indexer(self.indexer, self.indexer_id, self.lang)
@@ -351,7 +351,7 @@ class QueueItemAdd(ShowQueueItem):
 
                 ui.notifications.error("Unable to add show",
                                        "Show in " + self.showDir + " has no name on " + str(sickbeard.indexerApi(
-                                           self.indexer).name) + ", probably the wrong language. Delete .nfo and add manually in the correct language.")
+                                        self.indexer).name) + ", probably the wrong language. Delete .nfo and add manually in the correct language.")
                 self._finishEarly()
                 return
             # if the show has no episodes/seasons

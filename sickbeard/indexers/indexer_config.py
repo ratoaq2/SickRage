@@ -1,6 +1,8 @@
 # coding=utf-8
 
 from tvdb_api.tvdb_api import Tvdb
+#from tvrage_api.tvrage_api import TVRage
+from pytvmaze.pytvmaze_api import TVmaze
 from sickbeard import helpers
 
 initConfig = {
@@ -18,9 +20,11 @@ initConfig = {
 
 INDEXER_TVDB = 1
 INDEXER_TVRAGE = 2  # Must keep
+INDEXER_TVMAZE = 3
 
 indexerConfig = {
     INDEXER_TVDB: {
+        'enabled': True,
         'id': INDEXER_TVDB,
         'name': 'theTVDB',
         'module': Tvdb,
@@ -28,14 +32,43 @@ indexerConfig = {
             'apikey': 'F9C450E78D99172E',
             'language': 'en',
             'useZip': True,
+            'session': helpers.make_session(cache_etags=False),
         },
-        'session': helpers.make_session(),
         'trakt_id': 'tvdb_id',
         'xem_origin': 'tvdb',
         'icon': 'thetvdb16.png',
         'scene_loc': 'https://cdn.pymedusa.com/scene_exceptions/scene_exceptions.json',
         'show_url': 'http://thetvdb.com/?tab=series&id=',
         'base_url': 'http://thetvdb.com/api/%(apikey)s/series/'
+    },
+#     INDEXER_TVRAGE: {
+#         'enabled': False,
+#         'id': INDEXER_TVRAGE,
+#         'name': 'TVRage',
+#         'module': TVRage,
+#         'api_params': {'apikey': 'Uhewg1Rr0o62fvZvUIZt',
+#                        'language': 'en',
+#         },
+#         'session': helpers.make_session()
+#     },
+    INDEXER_TVMAZE: {
+        'enabled': True,
+        'id': INDEXER_TVMAZE,
+        'name': 'TVmaze',
+        'module': TVmaze,
+        'trakt_id': 'tvdb_id',
+        'xem_origin': 'tvdb',
+        'api_params': {
+            'language': 'en',
+            'useZip': True,
+            'session': helpers.make_session(cache_etags=False),
+        },
+        'trakt_id': 'tvdb_id',
+        'xem_origin': 'tvdb',
+        'icon': 'tvmaze16.png',
+        'scene_loc': 'https://api.pymedusa.com/scene_exceptions.json',
+        'show_url': 'http://www.tvmaze.com/shows/',
+        'base_url': 'http://api.tvmaze.com/'
     }
 }
 

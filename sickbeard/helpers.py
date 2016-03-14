@@ -56,7 +56,8 @@ from sickrage.helper.common import http_code_description, media_extensions, pret
 from sickrage.helper.encoding import ek
 from sickrage.helper.exceptions import ex
 from sickrage.show.Show import Show
-from cachecontrol import CacheControl
+from cachecontrol import CacheControl, CacheControlAdapter
+from cachecontrol.cache import DictCache
 # from httpcache import CachingHTTPAdapter
 
 from itertools import izip, cycle
@@ -1383,12 +1384,24 @@ def _getTempDir():
     return ek(os.path.join, tempfile.gettempdir(), "sickrage-%s" % uid)
 
 
-def make_session():
+def make_session(cache_etags=True, serializer=None, heuristic=None):
     session = requests.Session()
+
+    adapter = CacheControlAdapter(
+        DictCache(),
+        cache_etags=cache_etags,
+        serializer=serializer,
+        heuristic=heuristic,
+    )
+
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
+    session.cache_controller = adapter.controller
 
     session.headers.update({'User-Agent': USER_AGENT, 'Accept-Encoding': 'gzip,deflate'})
 
-    return CacheControl(sess=session, cache_etags=True)
+    return session
 
 
 def request_defaults(kwargs):
