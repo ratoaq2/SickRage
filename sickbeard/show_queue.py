@@ -37,7 +37,7 @@ from sickrage.helper.exceptions import ShowDirectoryNotFoundException
 from sickbeard.helpers import get_showname_from_indexer
 from libtrakt import TraktAPI
 from sickrage.helper.encoding import ek
-from sickbeard.helpers import makeDir, chmodAsParent
+from sickbeard.helpers import makeDir, chmodAsParent, mapIndexersToShow
 from sickrage.helper.common import sanitize_filename
 
 
@@ -499,6 +499,10 @@ class QueueItemAdd(ShowQueueItem):
         if self.show.default_ep_status == WANTED:
             logger.log(u"Launching backlog for this show since its episodes are WANTED")
             sickbeard.backlogSearchScheduler.action.searchBacklog([self.show])
+
+        # Always try to map the indexer to the show to other indexers.
+        # We don't need the mapped dict, only want to make sure it's updated in the indexer_mapping
+        mapIndexersToShow(self.show)
 
         self.show.writeMetadata()
         self.show.updateMetadata()

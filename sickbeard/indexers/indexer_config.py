@@ -39,7 +39,8 @@ indexerConfig = {
         'icon': 'thetvdb16.png',
         'scene_loc': 'https://cdn.pymedusa.com/scene_exceptions/scene_exceptions.json',
         'show_url': 'http://thetvdb.com/?tab=series&id=',
-        'base_url': 'http://thetvdb.com/api/%(apikey)s/series/'
+        'base_url': 'http://thetvdb.com/api/%(apikey)s/series/',
+        'mapped_to': 'tvdbid'  # The attribute to which other indexers can map there thetvdb id to
     },
 #     INDEXER_TVRAGE: {
 #         'enabled': False,
@@ -68,7 +69,8 @@ indexerConfig = {
         'icon': 'tvmaze16.png',
         'scene_loc': 'https://api.pymedusa.com/scene_exceptions.json',
         'show_url': 'http://www.tvmaze.com/shows/',
-        'base_url': 'http://api.tvmaze.com/'
+        'base_url': 'http://api.tvmaze.com/',
+        'mapped_to': 'tvmazeid'  # The attribute to which other indexers can map there tvmaze id to
     }
 }
 

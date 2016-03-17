@@ -1323,23 +1323,37 @@ def mapIndexersToShow(showObj):
             t = sickbeard.indexerApi(indexer).indexer(**lINDEXER_API_PARMS)
 
             try:
-                mapped_show = t[showObj.name]
+                mapped_indexer = getattr(showObj, sickbeard.indexerApi(indexer).config.copy().get('mapped_to'), None)
+                mapped_show = t[showObj.name] if not mapped_indexer else t[mapped_indexer]
+                if not isinstance(mapped_show, list):
+                    mapped[indexer]
+                    mapped_show = [mapped_show]
             except Exception:
                 logger.log(u"Unable to map " + sickbeard.indexerApi(showObj.indexer).name + "->" + sickbeard.indexerApi(
                     indexer).name + " for show: " + showObj.name + ", skipping it", logger.DEBUG)
                 continue
 
-            if mapped_show and len(mapped_show) == 1:
+            # We can get a list of results of OrderedDicts, or one Show object.
+            # We need a way to check both for the indexer_id.
+            try:
+                indexer_id = None
+                if mapped_show and len(mapped_show) == 1:
+                    if isinstance(mapped_show[0], dict):
+                        indexer_id = mapped_show[0]['id']
+            except Exception:
+                pass
+
+            if indexer_id:
                 logger.log(u"Mapping " + sickbeard.indexerApi(showObj.indexer).name + "->" + sickbeard.indexerApi(
                     indexer).name + " for show: " + showObj.name, logger.DEBUG)
 
-                mapped[indexer] = int(mapped_show[0]['id'])
+                mapped[indexer] = int(indexer_id)
 
                 logger.log(u"Adding indexer mapping to DB for show: " + showObj.name, logger.DEBUG)
 
                 sql_l.append([
                     "INSERT OR IGNORE INTO indexer_mapping (indexer_id, indexer, mindexer_id, mindexer) VALUES (?,?,?,?)",
-                    [showObj.indexerid, showObj.indexer, int(mapped_show[0]['id']), indexer]])
+                    [showObj.indexerid, showObj.indexer, mapped[indexer], indexer]])
 
         if len(sql_l) > 0:
             main_db_con = db.DBConnection()
