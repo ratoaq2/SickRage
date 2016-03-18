@@ -40,14 +40,16 @@ class History(object):
             'WHERE 1 = 1'
         )
 
-    def get(self, action=None):
+    def get(self, limit=100, action=None):
         """
+        :param limit: The maximum number of elements to return
         :param action: The type of action to filter in the history. Either 'downloaded' or 'snatched'. Anything else or
-                        no value will return everything
-        :return: elements of type ``action`` in the history
+                        no value will return everything (up to ``limit``)
+        :return: The last ``limit`` elements of type ``action`` in the history
         """
 
         actions = History._get_actions(action)
+        limit = History._get_limit(limit)
 
         common_sql = 'SELECT action, date, episode, provider, h.quality, resource, season, show_name, showid ' \
                      'FROM history h, tv_shows s ' \
@@ -60,7 +62,7 @@ class History(object):
         else:
             results = self.db.select(common_sql + order_sql)
 
-        data = []
+        data = compact = []
         for result in results:
             data.append({
                 'action': result['action'],
@@ -74,7 +76,40 @@ class History(object):
                 'show_name': result['show_name']
             })
 
-        return data
+        for row in data:
+            action = {
+                'action': row['action'],
+                'provider': row['provider'],
+                'resource': row['resource'],
+                'time': row['date']
+            }
+
+            if not any((history['show_id'] == row['show_id'] and
+                        history['season'] == row['season'] and
+                        history['episode'] == row['episode'] and
+                        history['quality'] == row['quality']) for history in compact):
+                history = {
+                    'actions': [action],
+                    'episode': row['episode'],
+                    'quality': row['quality'],
+                    'resource': row['resource'],
+                    'season': row['season'],
+                    'show_id': row['show_id'],
+                    'show_name': row['show_name']
+                }
+
+                compact.append(history)
+            else:
+                index = [i for i, item in enumerate(compact)
+                         if item['show_id'] == row['show_id'] and
+                         item['season'] == row['season'] and
+                         item['episode'] == row['episode'] and
+                         item['quality'] == row['quality']][0]
+                history = compact[index]
+                history['actions'].append(action)
+                history['actions'].sort(key=lambda x: x['time'], reverse=True)
+
+        return data[:limit]
 
     def trim(self):
         """
@@ -100,3 +135,9 @@ class History(object):
 
         return []
 
+ 
+    @staticmethod
+    def _get_limit(limit):
+        limit = try_int(limit, 0)
+
+        return max(limit, 0)

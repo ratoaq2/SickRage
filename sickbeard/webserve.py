@@ -3877,41 +3877,7 @@ class History(WebRoot):
 
         sickbeard.save_config()
 
-        compact = []
-        data = self.history.get()
-
-        for row in data:
-            action = {
-                'action': row['action'],
-                'provider': row['provider'],
-                'resource': row['resource'],
-                'time': row['date']
-            }
-
-            if not any((history['show_id'] == row['show_id'] and
-                        history['season'] == row['season'] and
-                        history['episode'] == row['episode'] and
-                        history['quality'] == row['quality']) for history in compact):
-                history = {
-                    'actions': [action],
-                    'episode': row['episode'],
-                    'quality': row['quality'],
-                    'resource': row['resource'],
-                    'season': row['season'],
-                    'show_id': row['show_id'],
-                    'show_name': row['show_name']
-                }
-
-                compact.append(history)
-            else:
-                index = [i for i, item in enumerate(compact)
-                         if item['show_id'] == row['show_id'] and
-                         item['season'] == row['season'] and
-                         item['episode'] == row['episode'] and
-                         item['quality'] == row['quality']][0]
-                history = compact[index]
-                history['actions'].append(action)
-                history['actions'].sort(key=lambda x: x['time'], reverse=True)
+        data = self.history.get(limit)
 
         t = PageTemplate(rh=self, filename="history.mako")
         submenu = [
@@ -3919,7 +3885,7 @@ class History(WebRoot):
             {'title': 'Trim History', 'path': 'history/trimHistory', 'icon': 'menu-icon-cut', 'class': 'trimhistory', 'confirm': True},
         ]
 
-        return t.render(historyResults=data, compactResults=compact[:limit], limit=limit,
+        return t.render(historyResults=data, compactResults=data, limit=limit,
                         submenu=submenu, title='History', header='History',
                         topmenu="history", controller="history", action="index")
 
