@@ -1,8 +1,7 @@
 # coding=utf-8
 
 from tvdb_api.tvdb_api import Tvdb
-#from tvrage_api.tvrage_api import TVRage
-from pytvmaze.pytvmaze_api import TVmaze
+from tvmaze.tvmaze_api import TVmaze
 from sickbeard import helpers
 
 initConfig = {
@@ -42,16 +41,6 @@ indexerConfig = {
         'base_url': 'http://thetvdb.com/api/%(apikey)s/series/',
         'mapped_to': 'tvdbid'  # The attribute to which other indexers can map there thetvdb id to
     },
-#     INDEXER_TVRAGE: {
-#         'enabled': False,
-#         'id': INDEXER_TVRAGE,
-#         'name': 'TVRage',
-#         'module': TVRage,
-#         'api_params': {'apikey': 'Uhewg1Rr0o62fvZvUIZt',
-#                        'language': 'en',
-#         },
-#         'session': helpers.make_session()
-#     },
     INDEXER_TVMAZE: {
         'enabled': True,
         'id': INDEXER_TVMAZE,

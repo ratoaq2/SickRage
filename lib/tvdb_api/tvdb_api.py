@@ -35,7 +35,6 @@ except ImportError:
     gzip = None
 
 from dateutil.parser import parse
-from cachecontrol import CacheControl, caches
 
 from tvdb_ui import BaseUI, ConsoleUI
 from tvdb_exceptions import (tvdb_error, tvdb_userabort, tvdb_shownotfound, tvdb_showincomplete,
@@ -548,7 +547,7 @@ class Tvdb:
         tvdb_api-myuser)
         """
         if hasattr(os, 'getuid'):
-            uid = "u%d" % (os.getuid())
+            uid = "u%d" % (os.getuid())  # pylint: disable=no-member
         else:
             # For Windows
             try:
@@ -796,6 +795,7 @@ class Tvdb:
         Any key starting with an underscore has been processed (not the raw
         data from the XML)
         """
+
         log().debug("Getting actors for %s" % (sid))
         actorsEt = self._getetsrc(self.config['url_actorsInfo'] % (sid))
 
