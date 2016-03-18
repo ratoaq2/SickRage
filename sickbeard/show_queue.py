@@ -667,7 +667,7 @@ class QueueItemUpdate(ShowQueueItem):
         logger.log(u"Loading all episodes from the database", logger.DEBUG)
         DBEpList = self.show.loadEpisodesFromDB()
 
-        # get episode list from TVDB
+        # get episode list from the indexer
         logger.log(u"Loading all episodes from " + sickbeard.indexerApi(self.show.indexer).name + "", logger.DEBUG)
         try:
             IndexerEpList = self.show.loadEpisodesFromIndexer(cache=not self.force)

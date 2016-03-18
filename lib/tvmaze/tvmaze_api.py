@@ -26,7 +26,8 @@ import time
 import logging
 import warnings
 import requests
-
+import re
+import cgi
 
 from collections import OrderedDict
 from tvmaze.tvmaze_exceptions import (tvmaze_error, tvmaze_shownotfound, tvmaze_showincomplete,
@@ -599,6 +600,12 @@ class TVmaze(object):
             data = data.replace(u"&amp;", u"&")
             data = data.strip()
 
+            tag_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
+            # Remove well-formed tags
+            no_tags = tag_re.sub('', data)
+            # Clean up anything else by escaping
+            data = cgi.escape(no_tags)
+
         return data
 
     # Tvdb implementation
@@ -686,6 +693,7 @@ class TVmaze(object):
                 'screencap': 'filename',
                 'number': 'episodenumber',
                 'season': 'seasonnumber',
+                'summary': 'overview'
             }
 
             for i, episode in enumerate(indexer_data):  # @UnusedVariable, pylint: disable=unused-variable
