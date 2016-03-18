@@ -3871,14 +3871,14 @@ class History(WebRoot):
             else:
                 limit = 100
         else:
-            limit = int(limit)
+            limit = try_int(limit, 100)
 
         sickbeard.HISTORY_LIMIT = limit
 
         sickbeard.save_config()
 
         compact = []
-        data = self.history.get(limit)
+        data = self.history.get()
 
         for row in data:
             action = {
@@ -3919,7 +3919,7 @@ class History(WebRoot):
             {'title': 'Trim History', 'path': 'history/trimHistory', 'icon': 'menu-icon-cut', 'class': 'trimhistory', 'confirm': True},
         ]
 
-        return t.render(historyResults=data, compactResults=compact, limit=limit,
+        return t.render(historyResults=data, compactResults=compact[:limit], limit=limit,
                         submenu=submenu, title='History', header='History',
                         topmenu="history", controller="history", action="index")
 
