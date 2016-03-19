@@ -543,7 +543,7 @@ def searchProviders(show, episodes, manualSearch=False, downCurQuality=False, ma
             if searchResults:
                 # make a list of all the results for this provider
                 for curEp in searchResults:
-                    if curEp in foundResults:
+                    if curEp in foundResults[curProvider.name]:
                         foundResults[curProvider.name][curEp] += searchResults[curEp]
                     else:
                         foundResults[curProvider.name][curEp] = searchResults[curEp]
@@ -565,7 +565,10 @@ def searchProviders(show, episodes, manualSearch=False, downCurQuality=False, ma
 
         # Update the cache if a manual search is being runned
         if manual_snatch:
-            results = curProvider.cache.update_cache_manual_search(searchResults[curEp])
+            results = False
+            for searched_episode in episodes:
+                results = curProvider.cache.update_cache_manual_search(searchResults[searched_episode.episode])
+
             if results:
                 # If we have at least a result from one provider, it's good enough to be marked as result
                 finalResults.append(results)
